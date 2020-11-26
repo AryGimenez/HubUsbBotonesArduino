@@ -1,7 +1,7 @@
 //Pin para identificar que esta activado el USB2
-const byte mPin_LedUSB1= 24;
+const byte mPin_LedUSB1= 16;
 //Pin para identificar que esta activado el USB2
-const byte mPin_LedUSB2= 25;
+const byte mPin_LedUSB2= 15;
 
 // Guarda El Usb Activo actualemtne
 // 1: USB1
@@ -11,23 +11,20 @@ byte mNumUsbActivo = 1;
 // Variable que determina se el boton esta pulado
 boolean mBotonPulsado = false;
 
-// Pines De Rele
-const byte mPin_Rele1= 11;
-const byte mPin_Rele2= 10;
-const byte mPin_Rele3= 9;
-const byte mPin_Rele4= 8;
-const byte mPin_Boton=32;
+const byte mPin_Boton= 2;
 
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(9600);
+  
 
   // Coloca los pines de el led como emisor
+  
   pinMode(mPin_LedUSB1, OUTPUT);
-  pinMode(mPin_LedUSB1, OUTPUT);
+  pinMode(mPin_LedUSB2, OUTPUT);
 
   // Coloca Pin de Boton como Receptor
-  pinMode(mPin_Boton, IMPUT);
+  pinMode(mPin_Boton, INPUT);
   
   // Deja el pin de led 
   digitalWrite(mPin_LedUSB1, HIGH);
@@ -36,11 +33,25 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  
 
-  mBotonPulsado = digitalRead(mPin_Boton); // Lee si el boton esta precionado
+ // El Pulsador que use es normamente Cerrado
+  mBotonPulsado = digitalRead(mPin_Boton); // Lee el pien para determinar si se pulso el boton
+  
+  if(mBotonPulsado == LOW){   
 
-  if(mBotonPulsado == HIGH){
-    digitalWrite(mPin_LedUSB2, low);
+    if (mNumUsbActivo == 1)
+      mNumUsbActivo = 2;
+    else
+      mNumUsbActivo = 1;  
+    
+    encenderUSB(mNumUsbActivo);
+
+    //Establese un tiempito para que soltar el boton
+    delay(1000);
+    delay(1000);
+    delay(1000);
+    delay(1000);
 
   }
 
@@ -52,6 +63,10 @@ void loop() {
 void encenderUSB (int pNumUSB){
 
   if (pNumUSB == 1){
-    
+    digitalWrite(mPin_LedUSB2, LOW); // Apaga el led 2
+    digitalWrite(mPin_LedUSB1, HIGH); // Enciende el Led 1
+  }else{
+    digitalWrite(mPin_LedUSB2, HIGH); // Apaga el led 2
+    digitalWrite(mPin_LedUSB1, LOW); // Enciende el Led 2
   }
 }
